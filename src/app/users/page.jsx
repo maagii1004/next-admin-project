@@ -9,8 +9,8 @@ import { useEffect, useState } from "react";
 
 const Users = () => {
   const [createModalOpen, setCreateModalOpen] = useState(false);
-
   const [data, setData] = useState([]);
+  const [limit, setLimit] = useState(10);
 
   useEffect(() => {
     fetch("/api/users")
@@ -20,26 +20,50 @@ const Users = () => {
       });
   }, []);
 
+  const loadMore = () => {
+    setLimit((previousLimit) => previousLimit + 30); 
+  };
+
+  const handleSave = (newUser) => {
+    fetch('/api/users',{
+      method: "POST",
+      body: JSON.stringify(newUser)
+    })
+    setData((prevData) => [...prevData, newUser]);
+  };
+
+  const handleDelete = (userId) => {
+    fetch(`/api/users/${userId}`, {
+      method: "DELETE"
+    })
+    setData((prevData) => prevData.filter(item => item.id !== userId));
+  };
+
   return (
     <div>
       <Card>
         <CardHeader>
           <div className="flex justify-between">
-            <TypographyH3>Хэрэглэгчид</TypographyH3>
+            <TypographyH3>Users</TypographyH3>
             <Button variant="outline" onClick={() => setCreateModalOpen(true)}>
-              Шинээр нэмэх
+              Add New User
             </Button>
           </div>
         </CardHeader>
         <CardContent>
-          <UsersTable data={data} />
-          <div className="flex justify-center p-8">
-            <Button variant="outline">Load more...</Button>
-          </div>
+          <UsersTable data={data} limit={limit} onDelete={handleDelete}/>
+          
+          {limit <= data.length && (
+            <div className="flex justify-center p-8">
+              <Button variant="outline" onClick={loadMore}>
+                Load more...
+              </Button>
+            </div>
+          )}
         </CardContent>
       </Card>
 
-      <UserCreateDialog open={createModalOpen} onClose={setCreateModalOpen} />
+      <UserCreateDialog open={createModalOpen} onClose={setCreateModalOpen} onSave={handleSave} />
     </div>
   );
 };
