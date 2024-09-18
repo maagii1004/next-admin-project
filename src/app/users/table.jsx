@@ -22,19 +22,48 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MoreHorizontal, Settings } from "lucide-react";
 import { useState } from "react";
+import { DeleteWarningModal } from "./DeleteWarning";
+import { EditUserDialog } from "./EditUser";
+
 
 export function UsersTable({ data, limit, onDelete}) {
 
+  {/* State for search */}
   const [search, setSearch] = useState("");
 
-  const filteredData = data.filter(item => item.lastname.includes(search) || item.firstname.includes(search) || item.email.includes(search));
+  {/* State for delete */}
+  const [deleteModal, setDeleteModal] = useState(false);
+  const [userForDeleting, setUserForDeleting] = useState(null);
+
+  {/* State for edit */}
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [userForEditing, setUserForEditing] = useState(null);
+
+  const filteredData = data.filter(item => item.lastname.toLowerCase().includes(search) || item.firstname.toLowerCase().includes(search) || item.email.toLowerCase().includes(search));
+
+  const handleDeleteClick = (userId) => {
+    setUserForDeleting(userId);
+    setDeleteModal(true);
+  };
+
+  const handleConfirmDelete = () => {
+    onDelete(userForDeleting);
+    setDeleteModal(false);
+  };
+
+  const handleEditClick = (user) => {
+    setUserForEditing(user);
+    setEditModalOpen(true);
+  };
+
+  
 
   return (
     <div className="w-full">
 
 
       <div className="flex items-center py-4">
-        <Input placeholder="Search..." className="max-w-sm" value={search} onChange={(e) => setSearch(e.target.value)}/>
+        <Input placeholder="Search..." className="max-w-sm" value={search} onChange={(e) => setSearch(e.target.value.toLowerCase())}/>
       </div>
 
       <div className="border rounded-md">
@@ -83,7 +112,7 @@ export function UsersTable({ data, limit, onDelete}) {
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem>Edit</DropdownMenuItem>
-                      <DropdownMenuItem onClick={()=> onDelete(item.id)}>Delete</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleDeleteClick(item.id)}>Delete</DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableHead>
@@ -91,6 +120,9 @@ export function UsersTable({ data, limit, onDelete}) {
             ))}
           </TableBody>
         </Table>
+
+
+        <DeleteWarningModal open={deleteModal} onCancel={() => setDeleteModal(false)} onConfirm={handleConfirmDelete} />
       </div>
     </div>
   );
