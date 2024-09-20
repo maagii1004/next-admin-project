@@ -39,6 +39,14 @@ const Users = () => {
     setData((prevData) => prevData.filter(item => item.id !== userId));
   };
 
+const handleEdit = (updatedUser) => {
+  setData((prevData) =>
+    prevData.map((user) =>
+      user.id === updatedUser.id ? updatedUser : user
+    )
+  );
+};
+
   return (
     <div>
       <Card>
@@ -51,7 +59,7 @@ const Users = () => {
           </div>
         </CardHeader>
         <CardContent>
-          <UsersTable data={data} limit={limit} onDelete={handleDelete}/>
+          <UsersTable data={data} limit={limit} onDelete={handleDelete} onEdit={handleEdit}/>
           
           {limit <= data.length && (
             <div className="flex justify-center p-8">

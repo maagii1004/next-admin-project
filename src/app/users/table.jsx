@@ -26,7 +26,7 @@ import { DeleteWarningModal } from "./DeleteWarning";
 import { EditUserDialog } from "./EditUser";
 
 
-export function UsersTable({ data, limit, onDelete}) {
+export function UsersTable({ data, limit, onDelete, onEdit}) {
 
   {/* State for search */}
   const [search, setSearch] = useState("");
@@ -56,6 +56,10 @@ export function UsersTable({ data, limit, onDelete}) {
     setEditModalOpen(true);
   };
 
+  const handleSaveEdit = (updatedUser) => {
+    onEdit(updatedUser);
+    setEditModalOpen(false);
+  };
   
 
   return (
@@ -111,7 +115,7 @@ export function UsersTable({ data, limit, onDelete}) {
                         Copy Email
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem>Edit</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleEditClick(item)}>Edit</DropdownMenuItem>
                       <DropdownMenuItem onClick={() => handleDeleteClick(item.id)}>Delete</DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -123,6 +127,7 @@ export function UsersTable({ data, limit, onDelete}) {
 
 
         <DeleteWarningModal open={deleteModal} onCancel={() => setDeleteModal(false)} onConfirm={handleConfirmDelete} />
+        <EditUserDialog open={editModalOpen} onClose={() => setEditModalOpen(false)} onSaveEdit={handleSaveEdit} user={userForEditing} />
       </div>
     </div>
   );

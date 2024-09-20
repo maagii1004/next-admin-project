@@ -1,6 +1,8 @@
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export const EditUserDialog = ({ open, onClose, onSaveEdit, user}) => {
     const [changeData, setChangeData] = useState({ firstname: "", lastname: "", email: ""});
@@ -32,8 +34,15 @@ export const EditUserDialog = ({ open, onClose, onSaveEdit, user}) => {
                     <DialogTitle>Edit User</DialogTitle>
                 </DialogHeader>
                 <div>
+                    <Label>Last Name:</Label>
                     <Input name="lastname" placeholder="Last Name" value={changeData.lastname} onChange={handleChange} />
+                </div>
+                <div>
+                    <Label>First Name:</Label>
                     <Input name="firstname" placeholder="First Name" value={changeData.firstname} onChange={handleChange} />
+                </div>
+                <div>
+                    <Label>E-Mail:</Label>
                     <Input name="email" placeholder="E-Mail" value={changeData.email} onChange={handleChange} />
                 </div>
                 <DialogFooter>
